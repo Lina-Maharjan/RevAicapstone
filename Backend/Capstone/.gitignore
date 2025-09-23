@@ -1,0 +1,50 @@
+# python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+# virtual environments
+env/
+venv/
+ENV/
+.env
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Development environment
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Local configuration
+.env
+*.local
+
+# Database files
+*.db
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# ML models (if they're large or you plan to distribute them separately)
+ml_models/*.pkl
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+coverage.xml
+*.cover
