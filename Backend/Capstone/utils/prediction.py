@@ -1,5 +1,6 @@
 import random
 import re
+import numpy as np
 from typing import List, Tuple
 from textblob import TextBlob
 from models.schemas import SentimentType, CategoryType, FakeDetectionResult, SingleReviewAnalysis
@@ -31,11 +32,41 @@ class ReviewAnalyzer:
         ]
     
     def detect_fake_review(self, review: str) -> Tuple[FakeDetectionResult, float]:
-        """
-        Mock fake review detection - replace with actual ML model
-        """
         try:
-            # Simple heuristic-based fake detection (replace with ML model)
+            if model_loader.fake_detection_model is not None and model_loader.vectorizer is not None:
+                # Process review text 
+                processed_review = review.lower()  # Basic preprocessing
+                # # Convert to 2D array with reshape - this fixes the error
+                # review_array = np.array([processed_review]).reshape(1, -1)
+
+                # Transform text to numerical features using the vectorizer
+                features = model_loader.vectorizer.transform([processed_review])
+                # Make prediction using the model
+                # Note: Adjust the code based on your specific model's API
+                # prediction = model_loader.fake_detection_model.predict(review_array)[0]
+                # probabilities = model_loader.fake_detection_model.predict_proba(review_array)[0]
+                # Make prediction using the model
+                prediction = model_loader.fake_detection_model.predict(features)[0]
+
+                # Check if model supports predict_proba
+                if hasattr(model_loader.fake_detection_model, 'predict_proba'):
+                    # Use probability if available
+                    probabilities = model_loader.fake_detection_model.predict_proba(features)[0]
+                    fake_probability = probabilities[1] if len(probabilities) > 1 else probabilities[0]
+                else:
+                    # For models like LinearSVC, use decision_function instead
+                    # Convert decision function score to a probability-like value between 0 and 1
+                    decision_score = model_loader.fake_detection_model.decision_function(features)[0]
+                    fake_probability = 1 / (1 + np.exp(-decision_score))  # Sigmoid function
+                
+                result = FakeDetectionResult.FAKE if fake_probability > 0.5 else FakeDetectionResult.REAL
+                confidence = fake_probability if result == FakeDetectionResult.FAKE else (1.0 - fake_probability)
+                
+                logger.debug(f"ML model fake detection: {result} with confidence {confidence:.2f}")
+                return result, confidence
+                
+            # Fall back to heuristic method if model isn't available
+            logger.debug("Using heuristic fake detection (ML model not available)")
             review_lower = review.lower()
             
             # Check for excessive exclamation marks
@@ -67,9 +98,37 @@ class ReviewAnalyzer:
     
     def analyze_sentiment(self, review: str) -> Tuple[SentimentType, float]:
         """
-        Analyze sentiment using TextBlob
+        Analyze sentiment using ML model with fallback to TextBlob
         """
         try:
+            # Try to use ML model if available
+            if model_loader.sentiment_model is not None:
+                # Process review text
+                processed_review = review.lower()  # Basic preprocessing
+                
+                # Make prediction using the model
+                # Adjust based on your specific model's API
+                prediction = model_loader.sentiment_model.predict([processed_review])[0]
+                confidence = model_loader.sentiment_model.predict_proba([processed_review])[0].max()
+                
+                # Map prediction to sentiment type (adjust based on your model outputs)
+                sentiment_mapping = {
+                    'positive': SentimentType.POSITIVE,
+                    'negative': SentimentType.NEGATIVE,
+                    'neutral': SentimentType.NEUTRAL
+                }
+                
+                # Convert model output to SentimentType enum
+                sentiment = sentiment_mapping.get(
+                    str(prediction).lower(), 
+                    SentimentType.NEUTRAL
+                )
+                
+                logger.debug(f"ML model sentiment analysis: {sentiment} with confidence {confidence:.2f}")
+                return sentiment, confidence
+            
+            # Fall back to TextBlob if model isn't available
+            logger.debug("Using TextBlob for sentiment analysis (ML model not available)")
             blob = TextBlob(review)
             polarity = blob.sentiment.polarity
             
@@ -91,9 +150,37 @@ class ReviewAnalyzer:
     
     def categorize_review(self, review: str) -> CategoryType:
         """
-        Categorize review based on content
+        Categorize review using ML model with fallback to keyword matching
         """
         try:
+            # Try to use ML model if available
+            if model_loader.category_model is not None:
+                # Process review text
+                processed_review = review.lower()  # Basic preprocessing
+                
+                # Make prediction using the model
+                # Adjust based on your specific model's API
+                category_pred = model_loader.category_model.predict([processed_review])[0]
+                
+                # Map prediction to category type (adjust based on your model outputs)
+                category_mapping = {
+                    'quality': CategoryType.QUALITY,
+                    'price': CategoryType.PRICE,
+                    'delivery': CategoryType.DELIVERY,
+                    'general': CategoryType.GENERAL
+                }
+                
+                # Convert model output to CategoryType enum
+                category = category_mapping.get(
+                    str(category_pred).lower(), 
+                    CategoryType.GENERAL
+                )
+                
+                logger.debug(f"ML model categorization: {category}")
+                return category
+            
+            # Fall back to keyword approach if model isn't available
+            logger.debug("Using keyword matching for categorization (ML model not available)")
             review_lower = review.lower()
             
             quality_score = sum(1 for keyword in self.quality_keywords if keyword in review_lower)
