@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+//signup milauna parcha
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -33,7 +34,7 @@ const SignIn = () => {
             </div>
 
             {/* Title & Description */}
-            <h2 className="text-xl sm:text-2xl font-bold mb-1">Signin to RevAI</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">SignUp to RevAI</h2>
             <p className="text-gray-500 text-sm text-center">
               Access your AI-powered review analysis dashboard
             </p>
