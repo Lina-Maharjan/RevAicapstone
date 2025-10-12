@@ -5,6 +5,7 @@ from routes import auth, analyze_url, analyze_text, demo
 from utils.model_loader import model_loader
 import logging
 import uvicorn
+from routes import contact
 
 
 # Configure logging
@@ -37,6 +38,7 @@ app.include_router(auth.router)
 app.include_router(analyze_url.router)
 app.include_router(analyze_text.router)
 app.include_router(demo.router)
+app.include_router(contact.router)
 # Startup event
 @app.on_event("startup")
 async def startup_event():

@@ -28,3 +28,5 @@ async def ping_mongo():
 
 def get_database():
     return db
+
+contact_messages = db["contact_messages"]

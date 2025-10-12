@@ -56,3 +56,8 @@ class AnalysisResponse(BaseModel):
     detailed_results: List[SingleReviewAnalysis]
     overall_sentiment: SentimentType
     fake_percentage: float
+
+class ContactFormInput(BaseModel):
+    name: str
+    email: EmailStr
+    message: str
