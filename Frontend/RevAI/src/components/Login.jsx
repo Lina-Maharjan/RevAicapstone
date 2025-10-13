@@ -14,19 +14,14 @@ const Login = () => {
       <div className="flex max-w-5xl w-full items-center justify-between gap-6">
         
         {/* Left Image Card */}
-        <div className="hidden md:flex flex-col justify-between items-center bg-[#E0F2FE] rounded-2xl border-2 border-blue-400 p-6 w-1/2">
+      <div className="hidden md:flex flex-col justify-center items-center relative w-1/2 rounded-2xl overflow-hidden">
+       {/* Background Image */}
           <img
-            src="/LoginImage.png"
+            src="/login.png"
             alt="Login Illustration"
-            className="w-full h-auto object-contain rounded-lg"
+            className="w-full h-auto object-cover rounded-2xl mt-11"
           />
-          <div className="text-center mt-4">
-            <h2 className="text-lg font-bold text-teal-600">RevAI</h2>
-            <p className="text-gray-600 text-sm mt-1">
-              Sentiment and fake review detection uses AI to analyze emotions and spot fake reviews.
-            </p>
           </div>
-        </div>
 
         {/* Right Login Form */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
