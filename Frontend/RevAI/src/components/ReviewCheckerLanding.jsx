@@ -1,7 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const ReviewCheckerLanding = () => {
+ const navigate = useNavigate();
+
+  const handleDemoClick = () => {
+    navigate("/Analyzer"); // make sure this matches your route exactly
+  };
+
+  const handleLearnMoreClick = () => {
+    navigate("/About");
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center px-6"
@@ -50,16 +61,16 @@ const ReviewCheckerLanding = () => {
               style={{
                 background: "linear-gradient(90deg, #14B8A6, #14B8A6)",
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
-              }}
+              }} onClick={handleDemoClick}
             >
-              Try review analyzer
+              Try Demo
             </button>
             <button
               className="text-black font-medium py-2.5 px-6 rounded-lg shadow-md"
               style={{
                 backgroundColor: "#FDE047",
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.15)",
-              }}
+              }} onClick={handleLearnMoreClick}
             >
               Learn more
             </button>
