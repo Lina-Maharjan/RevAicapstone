@@ -362,14 +362,27 @@ class ReviewAnalyzer:
         """
         try:
             # Try to use ML model if available
-            if model_loader.sentiment_model is not None:
+            if model_loader.sentiment_model is not None and model_loader.sentiment_vectorizer is not None:
                 # Process review text
                 processed_review = review.lower()  # Basic preprocessing
+
+                # Transform using the sentiment vectorizer
+                features = model_loader.sentiment_vectorizer.transform([processed_review])
                 
                 # Make prediction using the model
-                # Adjust based on your specific model's API
-                prediction = model_loader.sentiment_model.predict([processed_review])[0]
-                confidence = model_loader.sentiment_model.predict_proba([processed_review])[0].max()
+                prediction = model_loader.sentiment_model.predict(features)[0]
+            
+            # Check if model supports predict_proba
+                if hasattr(model_loader.sentiment_model, 'predict_proba'):
+                # Use probability if available
+                    probabilities = model_loader.sentiment_model.predict_proba(features)[0]
+                    confidence = probabilities.max()
+                else:
+                # For models like LinearSVC, use decision_function instead
+                    decision_scores = model_loader.sentiment_model.decision_function(features)
+                # Convert to a confidence-like score between 0 and 1
+                # This depends on your model type, might need adjustment
+                    confidence = 1 / (1 + np.exp(-np.abs(decision_scores).max()))
                 
                 # Map prediction to sentiment type (adjust based on your model outputs)
                 sentiment_mapping = {

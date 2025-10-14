@@ -12,7 +12,7 @@ class CategoryType(str, Enum):
     PRICE = "price"
     DELIVERY = "delivery"
     GENERAL = "general"
-#! removed service
+
 class FakeDetectionResult(str, Enum):
     FAKE = "fake"
     REAL = "real"

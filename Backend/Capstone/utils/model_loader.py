@@ -111,6 +111,7 @@ class ModelLoader:
         self.sentiment_model = None
         self.category_model = None
         self.vectorizer = None 
+        self.sentiment_vectorizer = None
         self.models_loaded = False
     
     def load_models(self) -> bool:
@@ -139,23 +140,24 @@ class ModelLoader:
                     logger.error(f"❌ Failed to load vectorizer: {str(e)}")
         
             # Load sentiment model
-            sentiment_model_path = os.path.join(models_dir, "sentiment_model.pkl")
+            sentiment_model_path = os.path.join(models_dir, "best_model_svmsentiment.pkl")
             if os.path.exists(sentiment_model_path):
                 try:
                     # Try joblib first
                     self.sentiment_model = joblib.load(sentiment_model_path)
                     logger.info("✅ Sentiment model loaded successfully using joblib")
-                except Exception:
-                    try:
-                        # Fall back to pickle
-                        with open(sentiment_model_path, 'rb') as f:
-                            self.sentiment_model = pickle.load(f)
-                            logger.info("✅ Sentiment model loaded successfully using pickle")
-                    except Exception as e:
-                        logger.error(f"❌ Failed to load sentiment model: {str(e)}")
-            else:
-                logger.warning(f"⚠️ Sentiment model not found at {sentiment_model_path}")
-        
+                except Exception as e:
+                    logger.error(f"❌ Failed to load sentiment model with joblib: {str(e)}")
+                    
+            # Load sentiment vectorizer (new)
+            sentiment_vectorizer_path = os.path.join(models_dir, "tf_idf_vectorizersentiment.pkl")
+            if os.path.exists(sentiment_vectorizer_path):
+                try:
+                    self.sentiment_vectorizer = joblib.load(sentiment_vectorizer_path)  # Use new property
+                    logger.info("✅ Sentiment TF-IDF Vectorizer loaded successfully")
+                except Exception as e:
+                    logger.error(f"❌ Failed to load sentiment vectorizer: {str(e)}")
+
             # Load category model
             category_model_path = os.path.join(models_dir, "category_model.pkl")
             if os.path.exists(category_model_path):
