@@ -1,46 +1,88 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate(); // To redirect after login
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isPasswordValid = password.length >= 6;
+
+  const API_URL = "http://127.0.0.1:8000/auth";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Email: ${email}, Password: ${password}`);
+    setEmailTouched(true);
+    setPasswordTouched(true);
+
+    if (!isEmailValid || !isPasswordValid) {
+      alert("Please fix the errors before submitting.");
+      return;
+    }
+
+    try {
+      const response = await fetch(API_URL + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.access_token);
+        alert("Login successful!");
+        navigate("/dashboard"); // Redirect to dashboard after login
+      } else {
+        alert(data.detail || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Server error. Try again later.");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="flex max-w-5xl w-full items-center justify-between gap-6">
-        
-        {/* Left Image Card */}
-      <div className="hidden md:flex flex-col justify-center items-center relative w-1/2 rounded-2xl overflow-hidden">
-       {/* Background Image */}
+      <div className="flex max-w-4xl w-full items-center gap-6">
+
+        {/* Left Image */}
+        <div className="hidden md:flex w-1/2">
           <img
             src="/login.png"
             alt="Login Illustration"
-            className="w-full h-auto object-cover rounded-2xl mt-11"
+            className="w-full h-auto object-cover rounded-2xl"
           />
-          </div>
+        </div>
 
-        {/* Right Login Form */}
+        {/* Right Form */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
-          {/* Heading */}
-          <h2 className="text-2xl font-bold mb-2">Hello!</h2>
-          <p className="text-gray-500 mb-6">Welcome Onboard</p>
+          <h2 className="text-2xl font-bold mb-2">Welcome Back!</h2>
+          <p className="text-gray-500 mb-6">Login to your account</p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
               <input
                 type="email"
-                placeholder="Username/email"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                onBlur={() => setEmailTouched(true)}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  emailTouched && !isEmailValid
+                    ? "border-red-500 focus:ring-red-400"
+                    : "focus:ring-teal-400"
+                }`}
                 required
               />
+              {emailTouched && !isEmailValid && (
+                <p className="text-red-500 text-sm mt-1">Enter a valid email.</p>
+              )}
             </div>
 
             {/* Password */}
@@ -50,23 +92,21 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                onBlur={() => setPasswordTouched(true)}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                  passwordTouched && !isPasswordValid
+                    ? "border-red-500 focus:ring-red-400"
+                    : "focus:ring-teal-400"
+                }`}
                 required
               />
+              {passwordTouched && !isPasswordValid && (
+                <p className="text-red-500 text-sm mt-1">
+                  Password must be at least 6 characters.
+                </p>
+              )}
             </div>
 
-            {/* Remember + Forgot */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="h-4 w-4 text-teal-500" />
-                Remember me
-              </label>
-              <a href="#" className="text-teal-500 font-semibold hover:underline">
-                Forgot Password?
-              </a>
-            </div>
-
-            {/* Button */}
             <button
               type="submit"
               style={{
@@ -77,24 +117,16 @@ const Login = () => {
                 borderRadius: "0.5rem",
                 fontWeight: "600",
                 cursor: "pointer",
-                transition: "background-color 0.3s",
               }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = "#0D9488")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = "#14B8A6")
-              }
             >
               Login
             </button>
           </form>
 
-          {/* Signup */}
           <p className="text-center text-gray-600 text-sm mt-4">
             Don’t have an account?{" "}
-            <a href="#" className="text-teal-600 font-semibold hover:underline">
-              Sign Up 
+            <a href="/signup" className="text-teal-600 font-semibold hover:underline">
+              Sign Up
             </a>
           </p>
         </div>
@@ -104,8 +136,6 @@ const Login = () => {
 };
 
 export default Login;
-
-
 
 // import React, { useState } from "react";
 
@@ -119,58 +149,32 @@ export default Login;
 //   };
 
 //   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-teal-50 to-green-50 px-4">
-//       <div className="flex bg-white rounded-2xl shadow-lg overflow-hidden max-w-5xl w-full">
-//         {/* Left Info Card */}
-//         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-r from-teal-100 to-green-100 p-8 w-1/2 text-center">
-//           <div className="bg-white p-6 rounded-xl shadow-md">
-//             <img
-//               src="https://img.icons8.com/color/96/000000/lock--v1.png"
-//               alt="Security"
-//               className="mx-auto mb-4"
-//             />
-//             <ul className="text-teal-700 mb-4 space-y-2">
-//               <li>Secure login system</li>
-//               <li>Fast authentication</li>
-//               <li>Trusted by users</li>
-//             </ul>
-//             <div className="flex justify-between text-sm font-semibold text-teal-800">
-//               <p>
-//                 <span className="text-black font-bold">258-bit</span> Encryption
-//               </p>
-//               <p>
-//                 <span className="text-black font-bold">99.9%</span> Uptime
-//               </p>
-//             </div>
+//     <div className="min-h-screen flex items-center justify-center bg-white px-4">
+//       <div className="flex max-w-5xl w-full items-center justify-between gap-6">
+        
+//         {/* Left Image Card */}
+//       <div className="hidden md:flex flex-col justify-center items-center relative w-1/2 rounded-2xl overflow-hidden">
+//        {/* Background Image */}
+//           <img
+//             src="/login.png"
+//             alt="Login Illustration"
+//             className="w-full h-auto object-cover rounded-2xl mt-11"
+//           />
 //           </div>
-//         </div>
 
 //         {/* Right Login Form */}
-//         <div className="w-full md:w-1/2 p-8">
-//          {/* Logo + Heading */}
-//         <div className="flex flex-col items-center mb-6">
-//         <div className="flex items-center gap-2 mb-2">
-//         <img src="/logo.png" alt="RevAI Logo" className="w-10 h-10" />
-//         <span className="text-xl font-bold text-black">RevAI</span>
-//         </div>
-
-//         {/* Title & Description */}
-//         <h2 className="text-3xl font-bold mb-1">Sign In to RevAI</h2>
-//         <p className="text-gray-500 text-sm text-center">
-//         Access your AI-powered review analysis dashboard
-//         </p>
-//         </div>
+//         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
+//           {/* Heading */}
+//           <h2 className="text-2xl font-bold mb-2">Hello!</h2>
+//           <p className="text-gray-500 mb-6">Welcome Onboard</p>
 
 //           {/* Form */}
 //           <form onSubmit={handleSubmit} className="space-y-4">
 //             {/* Email */}
 //             <div>
-//               <label className="block text-black text-sm mb-1">
-//                 Email Address
-//               </label>
 //               <input
 //                 type="email"
-//                 placeholder="example@email.com"
+//                 placeholder="Username/email"
 //                 value={email}
 //                 onChange={(e) => setEmail(e.target.value)}
 //                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
@@ -180,12 +184,9 @@ export default Login;
 
 //             {/* Password */}
 //             <div>
-//               <label className="block text-black text-sm mb-1">
-//                 Password
-//               </label>
 //               <input
 //                 type="password"
-//                 placeholder="Enter password"
+//                 placeholder="Password"
 //                 value={password}
 //                 onChange={(e) => setPassword(e.target.value)}
 //                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
@@ -199,49 +200,42 @@ export default Login;
 //                 <input type="checkbox" className="h-4 w-4 text-teal-500" />
 //                 Remember me
 //               </label>
-//              <a href="#"  className="text-teal-500 font-semibold hover:underline">Forgot Password?</a>
+//               <a href="#" className="text-teal-500 font-semibold hover:underline">
+//                 Forgot Password?
+//               </a>
 //             </div>
 
-//             <button type="submit"
-//                 style={{width: '100%',backgroundColor: '#3B82F6', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.5rem',
-//                 fontWeight: '600', cursor: 'pointer', transition: 'background-color 0.3s',}}
-//             onMouseOver={e => e.currentTarget.style.backgroundColor = '#14B8A6'} 
-//             onMouseOut={e => e.currentTarget.style.backgroundColor = '#3B82F6'}>Sign In
+//             {/* Button */}
+//             <button
+//               type="submit"
+//               style={{
+//                 width: "100%",
+//                 backgroundColor: "#14B8A6",
+//                 color: "white",
+//                 padding: "0.5rem 1rem",
+//                 borderRadius: "0.5rem",
+//                 fontWeight: "600",
+//                 cursor: "pointer",
+//                 transition: "background-color 0.3s",
+//               }}
+//               onMouseOver={(e) =>
+//                 (e.currentTarget.style.backgroundColor = "#0D9488")
+//               }
+//               onMouseOut={(e) =>
+//                 (e.currentTarget.style.backgroundColor = "#14B8A6")
+//               }
+//             >
+//               Login
 //             </button>
-
 //           </form>
+
 //           {/* Signup */}
-//           <p className="text-center text-teal-600 text-sm mt-4">
+//           <p className="text-center text-gray-600 text-sm mt-4">
 //             Don’t have an account?{" "}
 //             <a href="#" className="text-teal-600 font-semibold hover:underline">
-//               Sign Up Now
+//               Sign Up 
 //             </a>
 //           </p>
-
-//           {/* Divider */}
-//           <div className="flex items-center my-4">
-//             <hr className="flex-grow border-teal-600" />
-//             <span className="mx-2 text-teal-600 text-sm">Or continue with</span>
-//             <hr className="flex-grow border-gray-300" />
-//           </div>
-
-//           {/* Social Buttons */}
-//           <div className="flex gap-3 justify-center">
-//             <button className="flex items-center justify-center gap-2 bg-white border px-4 py-2 text-teal-600 rounded-lg shadow-sm hover:bg-gray-100">
-//               < img src="https://img.icons8.com/color/24/google-logo.png" alt="" />
-//               Google
-//             </button>
-//             <button className="flex items-center justify-center gap-2 bg-white border px-4 py-2 text-teal-600 rounded-lg shadow-sm hover:bg-gray-100">
-//               <img src="https://img.icons8.com/color/24/facebook-new.png" alt="" />
-//               Facebook
-//             </button>
-//             <button className="flex items-center justify-center gap-2 bg-white border px-4 py-2 text-teal-600 rounded-lg shadow-sm hover:bg-gray-100">
-//               <img src="https://img.icons8.com/color/24/linkedin.png" alt="" />
-//               LinkedIn
-//             </button>
-//           </div>
-
-          
 //         </div>
 //       </div>
 //     </div>
@@ -249,3 +243,6 @@ export default Login;
 // };
 
 // export default Login;
+
+
+
