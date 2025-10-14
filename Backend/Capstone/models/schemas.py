@@ -11,9 +11,8 @@ class CategoryType(str, Enum):
     QUALITY = "quality"
     PRICE = "price"
     DELIVERY = "delivery"
-    SERVICE = "service"
     GENERAL = "general"
-
+#! removed service
 class FakeDetectionResult(str, Enum):
     FAKE = "fake"
     REAL = "real"
