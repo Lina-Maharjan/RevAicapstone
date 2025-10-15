@@ -4,10 +4,10 @@ const ReviewAnalyzer = () => {
   return (
     <div
       className="min-h-screen flex flex-col items-center px-4 py-12 pt-24"
-      // style={{
-      //   background:
-      //     "linear-gradient(90deg, #F0FDFA 0%, #E6FFFA 50%, #CCFBF1 100%)",
-      // }}
+      style={{
+        background:
+          "linear-gradient(90deg, #F0FDFA 0%, #E6FFFA 50%, #CCFBF1 100%)",
+      }}
     >
       {/* Heading outside the box */}
       <h2 className="text-3xl md:text-4xl font-extrabold text-[#0F766E] mb-2 text-center">
