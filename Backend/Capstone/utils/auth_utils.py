@@ -6,7 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from config.settings import settings
 
 # Password hasher
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto",
+bcrypt__rounds=12,  
+bcrypt__ident="2b",  
+bcrypt__truncate_error=False
+)
 
 # OAuth2 scheme setup for FastAPI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")

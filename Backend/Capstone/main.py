@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.mongo import ping_mongo
-from routes import auth, analyze_url, analyze_text, demo
+from routes import auth, analyze_url, analyze_text, demo, user_data
 from utils.model_loader import model_loader
 import logging
 import uvicorn
@@ -27,9 +27,9 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific domains
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"],  
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*"], 
     allow_headers=["*"],
 )
 
@@ -39,13 +39,14 @@ app.include_router(analyze_url.router)
 app.include_router(analyze_text.router)
 app.include_router(demo.router)
 app.include_router(contact.router)
+app.include_router(user_data.router)
 # Startup event
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
     try:
         # Test MongoDB connection
-        await ping_mongo()
+        ping_mongo()
         logger.info("✅ MongoDB connection established")
         
         # Load ML models

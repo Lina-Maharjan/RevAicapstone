@@ -18,7 +18,7 @@ user_collection = db[settings.USERS_COLLECTION]
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-async def ping_mongo():
+def ping_mongo():
     try:
         client.admin.command('ping')
         logger.info("Pinged your deployment. You successfully connected to MongoDB!")
@@ -29,4 +29,13 @@ async def ping_mongo():
 def get_database():
     return db
 
+def get_collection(collection_name):
+    """Get a specific collection from the database"""
+    return db[collection_name]
+
+def get_db():
+    """Alias for get_database for compatibility"""
+    return get_database()
+
 contact_messages = db["contact_messages"]
+analysis_history = db["analysis_history"]
