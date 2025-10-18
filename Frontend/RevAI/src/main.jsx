@@ -21,12 +21,12 @@ createRoot(document.getElementById("root")).render(
         {/* <Route path="/Home" element={<Home />} /> */}
          <Route path="/" element={<App />}>
          <Route index element={<Home />} />   
-        <Route path="/Analyzer" element={<Analyzer />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/About" element={<About />} />
-        <Route path="/Contact" element={<Contact />} />
-        <Route path="/SignUp" element={<SignUp />} />
-        <Route path="/Login" element={<LoginPage/>} />
+        <Route path="/analyzer" element={<Analyzer />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<LoginPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

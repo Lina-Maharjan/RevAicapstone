@@ -121,6 +121,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // for redirect
+import { apiFetch } from "../utils/api";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -161,28 +162,21 @@ const SignUp = () => {
     setSuccess("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+      await apiFetch('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password })
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // FastAPI returns HTTPException.detail for errors
-        throw new Error(data.detail || "Signup failed");
-      }
-
-      setSuccess("User created successfully! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 1500);
+      setSuccess('User created successfully! Redirecting to login...');
+      setTimeout(() => navigate('/login'), 1500);
 
       // Reset form
-      setUsername("");
-      setEmail("");
-      setPassword("");
+      setUsername('');
+      setEmail('');
+      setPassword('');
     } catch (err) {
-      setError(err.message || "Something went wrong.");
+      // apiFetch throws normalized error objects
+      setError(err.message || err.detail || 'Something went wrong.');
     } finally {
       setLoading(false);
     }

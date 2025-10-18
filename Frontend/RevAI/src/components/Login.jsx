@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch, setToken } from "../utils/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,8 @@ const Login = () => {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid = password.length >= 6;
 
-  const API_URL = "http://127.0.0.1:8000/auth";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+  const API_URL = `${API_BASE}/auth`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,24 +27,18 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch(API_URL + "/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: email, password }),
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ identifier: email, password })
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("token", data.access_token);
-        alert("Login successful!");
-        navigate("/dashboard"); // Redirect to dashboard after login
-      } else {
-        alert(data.detail || "Invalid credentials");
-      }
+      // Save token and redirect
+      setToken(data.access_token);
+      alert('Login successful!');
+      navigate('/dashboard');
     } catch (error) {
-      console.error("Error:", error);
-      alert("Server error. Try again later.");
+      console.error('Error:', error);
+      alert(error.detail || error.message || 'Server error. Try again later.');
     }
   };
 
