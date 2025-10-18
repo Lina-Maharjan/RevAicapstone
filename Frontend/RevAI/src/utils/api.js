@@ -10,7 +10,7 @@ async function parseResponse(res) {
 }
 
 export async function apiFetch(path, opts = {}) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
   const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -26,11 +26,11 @@ export async function apiFetch(path, opts = {}) {
 }
 
 export function setToken(token) {
-  if (token) localStorage.setItem('token', token);
+  if (token) localStorage.setItem('access_token', token);
 }
 
 export function clearToken() {
-  localStorage.removeItem('token');
+  localStorage.removeItem('access_token');
 }
 
 export default { apiFetch, setToken, clearToken };

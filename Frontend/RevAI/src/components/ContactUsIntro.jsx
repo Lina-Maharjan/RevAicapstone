@@ -29,16 +29,17 @@ const ContactUsIntro = () => {
     window.scrollTo(0, 0);
 
     const verify = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       if (!token) {
         setIsAuthenticated(false);
         return;
       }
       try {
-        await apiFetch('/auth/verify-token');
+        await apiFetch('/auth/me');  // Using the /me endpoint to verify token
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
+        localStorage.removeItem('access_token');  // Clear invalid token
       }
     };
     verify();
