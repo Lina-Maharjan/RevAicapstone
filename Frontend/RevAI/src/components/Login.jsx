@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { apiFetch, setToken } from "../utils/api";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [emailTouched, setEmailTouched] = useState(false);
+  const [identifierTouched, setIdentifierTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
 
   const navigate = useNavigate(); // To redirect after login
 
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+  const isUsernameFormat = /^[a-zA-Z0-9_]{3,}$/.test(identifier);
+  const isIdentifierValid = isEmailFormat || isUsernameFormat;
   const isPasswordValid = password.length >= 6;
 
   const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -18,10 +20,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setEmailTouched(true);
+    setIdentifierTouched(true);
     setPasswordTouched(true);
 
-    if (!isEmailValid || !isPasswordValid) {
+    if (!isIdentifierValid || !isPasswordValid) {
       alert("Please fix the errors before submitting.");
       return;
     }
@@ -29,7 +31,7 @@ const Login = () => {
     try {
       const data = await apiFetch('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ identifier: email, password })
+        body: JSON.stringify({ identifier, password })
       });
 
       // Save token and redirect
@@ -61,23 +63,23 @@ const Login = () => {
           <p className="text-gray-500 mb-6">Login to your account</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
+            {/* Email or Username */}
             <div>
               <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={() => setEmailTouched(true)}
+                type="text"
+                placeholder="Email or Username"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                onBlur={() => setIdentifierTouched(true)}
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                  emailTouched && !isEmailValid
+                  identifierTouched && !isIdentifierValid
                     ? "border-red-500 focus:ring-red-400"
                     : "focus:ring-teal-400"
                 }`}
                 required
               />
-              {emailTouched && !isEmailValid && (
-                <p className="text-red-500 text-sm mt-1">Enter a valid email.</p>
+              {identifierTouched && !isIdentifierValid && (
+                <p className="text-red-500 text-sm mt-1">Enter a valid email or username.</p>
               )}
             </div>
 

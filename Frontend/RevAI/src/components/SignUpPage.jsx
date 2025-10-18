@@ -143,7 +143,7 @@ const SignUp = () => {
   // Validation logic
   const isUsernameValid = username.length >= 3;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isPasswordValid = password.length >= 6;
+  const isPasswordValid = password.length >= 6 && new TextEncoder().encode(password).length <= 72;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -272,7 +272,7 @@ const SignUp = () => {
               />
               {passwordTouched && !isPasswordValid && (
                 <p className="text-red-500 text-sm mt-1">
-                  Password must be at least 6 characters.
+                  Password must be between 6 and 72 characters.
                 </p>
               )}
             </div>
