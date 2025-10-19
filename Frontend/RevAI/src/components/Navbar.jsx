@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { clearToken } from "../utils/api";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
 const Navbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    setIsAuthenticated(!!token);
-  }, []);
-
-  const handleLogout = () => {
-    clearToken();
-    setIsAuthenticated(false);
-    navigate('/');
-  };
-
   return (
     <nav className="nav">
       <NavLink to="/" className="site-title">
@@ -31,33 +16,23 @@ const Navbar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/analyzer" className="nav_link">Analyzer</NavLink>
+          <NavLink to="/analyzer" className="nav_link" >Analyzer</NavLink>
         </li>
-        {isAuthenticated && (
-          <li>
-            <NavLink to="/dashboard" className="nav_link">Dashboard</NavLink>
-          </li>
-        )}
         <li>
-          <NavLink to="/about" className="nav_link">About</NavLink>
+          <NavLink to="/dashboard" className="nav_link" >Dashboard</NavLink>
+        </li>
+        <li>
+          <NavLink to="/about" className="nav_link" >About</NavLink>
         </li>
         <li>
           <NavLink to="/contact" className="nav_link">Contact</NavLink>
         </li>
-        {!isAuthenticated ? (
-          <>
-            <li>
-              <NavLink to="/signup" className="nav_link">SignUp</NavLink>
-            </li>
-            <li>
-              <NavLink to="/login" className="nav_link">Login</NavLink>
-            </li>
-          </>
-        ) : (
-          <li>
-            <button onClick={handleLogout} className="nav_link">Logout</button>
-          </li>
-        )}
+        <li>
+          <NavLink to="/signup" className="nav_link">SignUp</NavLink>
+        </li>
+        <li>
+          <NavLink to="/login" className="nav_link">Login</NavLink>
+        </li>
       </ul>
     </nav>
   );
