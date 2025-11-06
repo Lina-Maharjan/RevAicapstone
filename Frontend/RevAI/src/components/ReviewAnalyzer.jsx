@@ -94,12 +94,32 @@ const ReviewAnalyzer = () => {
       }
 
       setResult(response);
-      
+
+      // Persist analysis to user history when logged in (not in demo)
+      if (!isDemo && response && typeof response === 'object') {
+        try {
+          // Attach minimal context (product_url/manual input) for dashboard display
+          const enriched = {
+            ...response,
+            product_url: productURL || null,
+            manual_input: reviewText || null
+          };
+          await apiFetch("/user/save-analysis", {
+            method: "POST",
+            body: JSON.stringify(enriched)
+          });
+          console.log("Analysis saved to history");
+        } catch (saveErr) {
+          // Don't surface save errors to the user; analysis already completed
+          console.error("Failed to save analysis to history:", saveErr);
+        }
+      }
+
       // Display demo message (tries remaining) only for non-logged-in users
       if (isDemo && response.message) {
         setDemoMessage(response.message);
       }
-      
+
       console.log("Analysis result:", response);
       
     } catch (err) {
