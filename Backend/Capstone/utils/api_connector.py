@@ -1,5 +1,6 @@
 import requests
 import re
+import time
 from typing import List
 from config.settings import settings
 import logging
@@ -28,12 +29,12 @@ def fetch_reviews_from_amazon(asin: str, max_pages: int = 3) -> List[str]:
     
     for page in range(1, max_pages + 1):
         # Using the exact URL format from your RapidAPI code
-        url = "https://amazon-product-reviews1.p.rapidapi.com/amazonreviews/"
+        url = "https://real-time-amazon-data.p.rapidapi.com/product-reviews"
         
         querystring = {
             "asin": asin,
-            "domain": "amazon.com", 
-            "pageNum": str(page)
+            "country": "US", 
+            "page": str(page)
         }
         
         # Using the exact header format from your RapidAPI code
@@ -44,8 +45,24 @@ def fetch_reviews_from_amazon(asin: str, max_pages: int = 3) -> List[str]:
         
         try:
             logger.info(f"🔍 Fetching page {page} for ASIN: {asin}")
-            response = requests.get(url, headers=headers, params=querystring, timeout=15)
-            logger.info(f"📊 API Response Status for page {page}: {response.status_code}")
+            
+            # Retry logic for 503 errors (service overload)
+            max_retries = 3
+            retry_delay = 2  # seconds
+            
+            for attempt in range(max_retries):
+                response = requests.get(url, headers=headers, params=querystring, timeout=30)
+                logger.info(f"📊 API Response Status for page {page}: {response.status_code}")
+                
+                if response.status_code == 503:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"⏳ API service overloaded (503), retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
+                        continue
+                    else:
+                        logger.error(f"❌ API still unavailable after {max_retries} attempts")
+                break
             
             if response.status_code == 200:
                 try:
@@ -151,8 +168,8 @@ def fetch_reviews_from_amazon(asin: str, max_pages: int = 3) -> List[str]:
 def test_api_connection(asin: str = "B01H6GUCCQ") -> dict:
     """Test API connection with a known ASIN"""
     try:
-        url = "https://amazon-product-reviews1.p.rapidapi.com/amazonreviews/"
-        querystring = {"asin": asin, "domain": "amazon.com", "pageNum": "1"}
+        url = "https://real-time-amazon-data.p.rapidapi.com/product-reviews"
+        querystring = {"asin": asin, "country": "US", "page": "1"}
         headers = {
             "x-rapidapi-key": settings.RAPIDAPI_KEY,
             "x-rapidapi-host": settings.RAPIDAPI_HOST

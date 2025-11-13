@@ -113,9 +113,9 @@ def api_status():
         },
         "models": {
             "ready": model_loader.is_ready(),
-            "fake_detection": "mock_implementation",
-            "sentiment_analysis": "textblob",
-            "categorization": "keyword_based"
+            "fake_detection": "svm_model" if model_loader.fake_detection_model else "heuristic_fallback",
+            "sentiment_analysis": "svm_model" if model_loader.sentiment_model else "textblob_fallback",
+            "categorization": "loaded" if model_loader.category_model else "keyword_based"
         }
     }
 
