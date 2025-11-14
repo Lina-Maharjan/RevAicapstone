@@ -147,14 +147,17 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUsernameTouched(true);
-    setEmailTouched(true);
-    setPasswordTouched(true);
-
+    
+    // Don't set all fields as touched at once - let them touch naturally
+    // Only validate when user tries to submit
+    
     // Client-side validation
     if (!isUsernameValid || !isEmailValid || !isPasswordValid) {
-      setError("Please fix the errors before submitting.");
-      return;
+      // Mark only invalid fields as touched
+      if (!isUsernameValid) setUsernameTouched(true);
+      if (!isEmailValid) setEmailTouched(true);
+      if (!isPasswordValid) setPasswordTouched(true);
+      return; // Don't show general error, field-specific errors will show
     }
 
     setLoading(true);
@@ -167,15 +170,20 @@ const SignUp = () => {
         body: JSON.stringify({ username, email, password })
       });
 
-      setSuccess('User created successfully! Redirecting to login...');
-      setTimeout(() => navigate('/login'), 1500);
-
+      setSuccess('Account created! Redirecting...');
+      
       // Reset form
       setUsername('');
       setEmail('');
       setPassword('');
+      setUsernameTouched(false);
+      setEmailTouched(false);
+      setPasswordTouched(false);
+      
+      setTimeout(() => navigate('/login'), 1500);
+
     } catch (err) {
-      // apiFetch throws normalized error objects
+      // Show backend error (like "Email already exists")
       setError(err.message || err.detail || 'Something went wrong.');
     } finally {
       setLoading(false);
@@ -204,9 +212,17 @@ const SignUp = () => {
             </p>
           </div>
 
-          {/* Feedback */}
-          {error && <p className="text-red-500 text-center mb-2 text-sm">{error}</p>}
-          {success && <p className="text-green-600 text-center mb-2 text-sm">{success}</p>}
+          {/* Feedback - Only show backend errors or success */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg mb-4 text-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-2 rounded-lg mb-4 text-sm">
+              {success}
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">

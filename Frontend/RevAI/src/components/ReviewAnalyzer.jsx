@@ -122,6 +122,10 @@ const ReviewAnalyzer = () => {
 
       console.log("Analysis result:", response);
       
+      // Reset form fields after successful analysis
+      setReviewText("");
+      setProductURL("");
+      
     } catch (err) {
       console.error("Analysis error:", err);
       
@@ -220,13 +224,11 @@ const ReviewAnalyzer = () => {
             </div>
           )}
 
-          {/* Success/Demo Message */}
           {demoMessage && !error && (
             <div className="mb-4 p-3 bg-teal-50 border border-teal-200 rounded-md">
               <p className="text-teal-700 text-sm">{demoMessage}</p>
             </div>
           )}
-
           {/* Analyze Button */}
           <button
             type="submit"
@@ -261,11 +263,11 @@ const ReviewAnalyzer = () => {
       {/* Results Section */}
       {result && (
         <div className="px-2 md:px-6 pb-12 bg-white">
-          <div className="max-w-4xl mx-auto border border-[#19A595] rounded-lg p-6 bg-gradient-to-br from-teal-50 to-white shadow-lg">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Analysis Results</h3>
+          <div className="max-w-6xl mx-auto border border-[#19A595] rounded-lg p-6 bg-gradient-to-br from-teal-50 to-white shadow-lg">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6">Analysis Results</h3>
             
             {/* Summary Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
                 <p className="text-2xl font-bold text-[#19A595]">{result.total_reviews || 0}</p>
@@ -277,39 +279,135 @@ const ReviewAnalyzer = () => {
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Genuine Reviews</p>
                 <p className="text-2xl font-bold text-green-500">{result.real_count || 0}</p>
+                {/* Backend does not provide real percentage; per requirement, do not calculate on frontend */}
+              </div>
+              <div className="bg-white p-4 rounded-lg shadow">
+                <p className="text-sm text-gray-600 mb-1">Overall Sentiment</p>
+                <p className={`text-2xl font-bold capitalize ${
+                  result.overall_sentiment === 'positive' ? 'text-green-500' :
+                  result.overall_sentiment === 'negative' ? 'text-red-500' :
+                  'text-gray-500'
+                }`}>
+                  {result.overall_sentiment || 'N/A'}
+                </p>
               </div>
             </div>
 
-            {/* Sentiment Distribution */}
-            {result.sentiment_distribution && (
-              <div className="bg-white p-4 rounded-lg shadow mb-4">
-                <h4 className="font-bold text-gray-800 mb-3">Sentiment Distribution</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700">Positive: {result.sentiment_distribution.positive || 0}</span>
-                    <span className="text-sm font-semibold text-green-600">{result.positive_percentage?.toFixed(1) || 0}%</span>
+            {/* Fake Percentage Card (full-width) */}
+            <div className="mb-6">
+              <div className="bg-white p-6 rounded-lg shadow border border-[#19A595]">
+                <h4 className="font-bold text-gray-800">Fake Review Analysis</h4>
+                <div className="mt-2 text-5xl font-extrabold text-red-600 leading-tight">
+                  {result.fake_percentage ?? 0}%
+                </div>
+                <p className="text-sm text-gray-600">Fake</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                    <span>Fake</span>
+                    <span>{result.fake_percentage ?? 0}%</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700">Neutral: {result.sentiment_distribution.neutral || 0}</span>
-                    <span className="text-sm font-semibold text-gray-600">{result.neutral_percentage?.toFixed(1) || 0}%</span>
+                  <div className="h-2 w-full bg-red-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-red-500 rounded-full" style={{ width: `${result.fake_percentage ?? 0}%` }} />
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700">Negative: {result.sentiment_distribution.negative || 0}</span>
-                    <span className="text-sm font-semibold text-red-600">{result.negative_percentage?.toFixed(1) || 0}%</span>
+                  <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
+                    <span></span>
+                    <span>Real</span>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Category Distribution */}
-            {result.category_distribution && Object.keys(result.category_distribution).length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Sentiment Distribution */}
+              {result.sentiment_distribution && (
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h4 className="font-bold text-gray-800 mb-3">Sentiment Distribution</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-700">Positive</span>
+                      <span className="text-sm font-semibold text-green-600">{result.sentiment_distribution.positive || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-700">Neutral</span>
+                      <span className="text-sm font-semibold text-gray-600">{result.sentiment_distribution.neutral || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-700">Negative</span>
+                      <span className="text-sm font-semibold text-red-600">{result.sentiment_distribution.negative || 0}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Category Distribution */}
+              {result.category_distribution && Object.keys(result.category_distribution).length > 0 && (
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h4 className="font-bold text-gray-800 mb-3">Category Distribution</h4>
+                  <div className="space-y-2">
+                    {Object.entries(result.category_distribution).map(([category, count]) => (
+                      <div key={category} className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700 capitalize">{category}</span>
+                        <span className="text-sm font-semibold text-[#19A595]">{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Detailed Results - Individual Reviews */}
+            {result.detailed_results && result.detailed_results.length > 0 && (
               <div className="bg-white p-4 rounded-lg shadow">
-                <h4 className="font-bold text-gray-800 mb-3">Category Distribution</h4>
-                <div className="space-y-2">
-                  {Object.entries(result.category_distribution).map(([category, count]) => (
-                    <div key={category} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-700 capitalize">{category}</span>
-                      <span className="text-sm font-semibold text-[#19A595]">{count}</span>
+                <h4 className="font-bold text-gray-800 mb-4 text-lg">Individual Review Analysis</h4>
+                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                  {result.detailed_results.map((review, index) => (
+                    <div 
+                      key={index} 
+                      className={`border rounded-lg p-4 ${
+                        review.is_fake === 'fake' ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
+                        <span className="text-xs font-semibold text-gray-600">Review #{index + 1}</span>
+                        <div className="flex flex-wrap gap-2">
+                          <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                            review.is_fake === 'fake' 
+                              ? 'bg-red-500 text-white' 
+                              : 'bg-green-500 text-white'
+                          }`}>
+                            {review.is_fake === 'fake' ? '🚫 FAKE' : '✓ REAL'}
+                          </span>
+                          <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                            review.sentiment === 'positive' ? 'bg-green-100 text-green-700' :
+                            review.sentiment === 'negative' ? 'bg-red-100 text-red-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {review.sentiment === 'positive' ? '😊 Positive' :
+                             review.sentiment === 'negative' ? '😞 Negative' :
+                             '😐 Neutral'}
+                          </span>
+                          <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold capitalize">
+                            📂 {review.category}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-gray-700 mb-3 italic">"{review.review_text}"</p>
+                      
+                      <div className="flex flex-wrap gap-4 text-xs text-gray-600">
+                        <div>
+                          <span className="font-semibold">Fake Detection Confidence:</span>
+                          <span className="ml-1 font-bold text-gray-800">
+                            {review.confidence_score}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="font-semibold">Sentiment Score:</span>
+                          <span className="ml-1 font-bold text-gray-800">
+                            {review.sentiment_score}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

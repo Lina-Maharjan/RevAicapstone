@@ -34,7 +34,7 @@ const features = [
 const KeyFeatures = () => {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
+      className="min-h-screen flex items-center justify-center px-6 py-16 md:py-20"
       style={{
         // background: "linear-gradient(90deg, #F8FAFC 0%, #F0FDF4 100%)",
         background:"White"

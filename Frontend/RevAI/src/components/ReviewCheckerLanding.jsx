@@ -6,7 +6,7 @@ const ReviewCheckerLanding = () => {
  const navigate = useNavigate();
 
   const handleDemoClick = () => {
-    navigate("/Analyzer"); // make sure this matches your route exactly
+    navigate("/Analyzer"); 
   };
 
   const handleLearnMoreClick = () => {
@@ -15,28 +15,28 @@ const ReviewCheckerLanding = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
+      className="min-h-screen flex items-center justify-center px-4 md:px-6 pt-20 md:pt-0 pb-16 md:pb-0 overflow-x-hidden"
       style={{
         background:
           "linear-gradient(90deg, #F0FDFA 0%, #E6FFFA 50%, #CCFBF1 100%)",
       }}
     >
-      <div className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-12">
+      <div className="max-w-7xl w-full flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
         {/* Left Section */}
-        <div className="max-w-xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug mb-4 font-black">
+        <div className="max-w-xl w-full">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug mb-4 font-black">
             Check if a review is{" "}
             <span className="bg-gradient-to-r from-teal-700 to-teal-400  bg-clip-text text-transparent font-black">
               Real or Fake
             </span>{" "}
             with AI
           </h1>
-          <p className="text-gray-700 mb-6 text-lg">
+          <p className="text-gray-700 mb-6 text-base md:text-lg">
             Identify authentic product reviews with our powerful AI sentiment
             analysis. Get accurate insights and make informed purchase
             decisions.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {/* <button
                   className="text-white font-medium py-2.5 px-6 rounded-lg shadow-md"
                   style={{
@@ -82,11 +82,12 @@ const ReviewCheckerLanding = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          className="w-full md:w-auto flex justify-center"
         >
           <img
             src="/Intro.png"
             alt="Review Analysis Illustration"
-            className="w-[480px] max-w-full"
+            className="w-full max-w-[500px] md:max-w-[600px] h-auto"
           />
         </motion.div>
       </div>

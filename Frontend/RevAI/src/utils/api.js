@@ -38,7 +38,15 @@ export function clearToken() {
   localStorage.removeItem('access_token');
 }
 
-export default { apiFetch, setToken, clearToken };
+export function getToken() {
+  return localStorage.getItem('access_token');
+}
+
+export function isAuthenticated() {
+  return !!localStorage.getItem('access_token');
+}
+
+export default { apiFetch, setToken, clearToken, getToken, isAuthenticated };
 
 
 // const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
