@@ -145,7 +145,24 @@ def fetch_reviews_from_amazon(asin: str, max_pages: int = 3) -> List[str]:
             "I've bought this product three times now. Always consistent quality.",
             "Overpriced for what it is. You can find better alternatives for less.",
             "The customer service was excellent when I had issues with my order.",
-            "Beautiful design, but functionality could be improved."
+            "Beautiful design, but functionality could be improved.",
+            "Love it! Exceeded my expectations in every way.",
+            "The material feels cheap and flimsy. Not worth the money.",
+            "Works as advertised. Satisfied with my purchase.",
+            "Fantastic product! Will buy again.",
+            "Did not meet my expectations. Returning it.",
+            "Great for daily use and very durable.",
+            "Highly recommend for anyone looking for quality and reliability.",
+            "This product is amazing! Great quality and fast shipping. Highly recommend!",
+            "I LOVEEE ITTTTT.....",
+            "Just okay, nothing extraordinary.",
+            "Exceeded my expectations in every way!",
+            "Would not recommend to anyone.",
+            "Fantastic product! Will buy again.",
+            "Does the job",
+            "no just no",
+            "Scam",
+            "This is not what i wanteeddddd"
         ]
         return sample_reviews
     
