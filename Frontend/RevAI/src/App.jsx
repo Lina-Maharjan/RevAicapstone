@@ -1,5 +1,5 @@
 import "@fontsource/inter"; // Defaults to 400 weight
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./components/Navbar";
 import KeyFeatures from "./components/KeyFeatures";
 import HowItWorks from "./components/HowItWorks";
@@ -12,13 +12,29 @@ import Login from "./components/Login";
 import ContactUsIntro from "./components/ContactUsIntro";
 import FrequentQuestions from "./components/FrequentQuestions";
 import ReviewCheckerLanding from "./components/ReviewCheckerLanding";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigationType } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Footer from "./components/Footer";
+// Scroll to top on route change (but preserve scroll on Back/Forward)
+function ScrollToTopOnRouteChange() {
+  const location = useLocation();
+  const navType = useNavigationType();
+
+  useEffect(() => {
+    
+    if (navType !== 'POP') {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, navType]);
+
+  return null;
+}
 
 function App() {
   return (
     <div>
+      <ScrollToTopOnRouteChange />
       <ToastContainer 
         position="top-right"
         autoClose={2000}
@@ -33,19 +49,9 @@ function App() {
       />
       <Navbar />
       <Outlet />
-      {/* <Navbar></Navbar> */}
-      {/* <ReviewCheckerLanding></ReviewCheckerLanding>
-      <KeyFeatures></KeyFeatures>
-      <HowItWorks></HowItWorks>
-      <ReminderAnalyze></ReminderAnalyze>
-      <AboutUs></AboutUs>
-      <AboutUsMission></AboutUsMission>
-      <AboutUsTeam></AboutUsTeam>
-      <ReviewAnalyzer></ReviewAnalyzer>
-      <Login></Login>
-      <ContactUsIntro></ContactUsIntro>
-      <FrequentQuestions></FrequentQuestions> */}
+      <Footer />
     </div>
+  
   );
 }
 

@@ -191,11 +191,11 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-teal-50 to-green-50 mt-9 px-4">
-      <div className="flex flex-col md:flex-row items-center justify-center max-w-5xl w-full">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-teal-50 to-green-50 px-4 pt-20">
+      <div className="flex max-w-5xl w-full items-center gap-8 md:gap-12">
         {/* Left Illustration */}
-        <div className="hidden md:flex justify-center items-center md:w-1/2">
-          <img src="/SignIn.png" alt="SignUp Illustration" className="max-w-lg w-full h-auto" />
+        <div className="hidden md:flex w-1/2 md:-ml-8 items-center justify-center">
+          <img src="/SignIn.png" alt="SignUp Illustration" className="w-full max-w-md h-auto rounded-3xl" />
         </div>
 
         {/* Right Form */}

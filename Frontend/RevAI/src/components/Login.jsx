@@ -193,11 +193,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="flex max-w-4xl w-full items-center gap-6">
+      <div className="flex max-w-5xl w-full items-center gap-8 md:gap-12">
         {/* Left Image */}
-        <div className="hidden md:flex w-1/2">
+        <div className="hidden md:flex w-1/2 md:-ml-12">
           <img
-            src="/login.png"
+            src="/Login.jpg"
             alt="Login Illustration"
             className="w-full h-auto object-cover rounded-2xl"
           />
