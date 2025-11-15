@@ -26,9 +26,9 @@ const AboutUs = () => {
         {/* Right Section - Just the Image */}
         <div className="md:w-1/2 flex justify-center">
           <img
-            src="/WhoWeAre.png" // replace with your actual image path
+            src="/AboutUS.png" 
             alt="Global Team Working Together"
-            className="w-full max-w-lg "
+            className="w-full max-w-3xl"
           />
         </div>
       </div>

@@ -114,11 +114,23 @@ export default function Dashboard() {
             Please log in to view your dashboard and analysis data.
           </p>
           <button
-            onClick={() => navigate("/login")}
-            className="w-full bg-[#14B8A6] hover:bg-[#0D9488] text-white py-2 px-4 rounded-md transition"
-          >
-            Log In
-          </button>
+  onClick={() => navigate("/login")}
+  style={{
+    width: "100%",
+    backgroundColor: "#14B8A6",
+    color: "white",
+    padding: "0.5rem 1rem",
+    borderRadius: "0.5rem",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
+  }}
+  onMouseEnter={(e) => (e.target.style.backgroundColor = "#0D9488")}
+  onMouseLeave={(e) => (e.target.style.backgroundColor = "#14B8A6")}
+>
+  Log In
+</button>
+
         </div>
       </div>
     );
