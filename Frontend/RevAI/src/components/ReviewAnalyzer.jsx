@@ -213,13 +213,30 @@ const ReviewAnalyzer = () => {
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-600 text-sm">{error}</p>
               {error.includes("Demo limit") && (
-                <button
-                  type="button"
-                  onClick={() => navigate("/login")}
-                  className="mt-2 w-full bg-[#19A595] hover:bg-[#148078] text-white font-semibold py-2 px-4 rounded-md transition duration-300"
-                >
-                  Log In to Continue
-                </button>
+               <button
+  type="button"
+  onClick={() => navigate("/login")}
+  disabled={loading}
+  style={{
+    width: "100%",
+    backgroundColor: loading ? "#A7F3D0" : "#14B8A6",
+    color: "white",
+    padding: "0.5rem 1rem",
+    borderRadius: "0.5rem",
+    fontWeight: "600",
+    cursor: loading ? "not-allowed" : "pointer",
+    transition: "background-color 0.3s",
+    border: "none",
+    marginTop: "0.5rem",
+  }}
+  onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = "#148078")}
+  onMouseLeave={(e) =>
+    !loading && (e.target.style.backgroundColor = "#14B8A6")
+  }
+>
+  {loading ? "Loading..." : "Log In to Continue"}
+</button>
+
               )}
             </div>
           )}
@@ -279,7 +296,7 @@ const ReviewAnalyzer = () => {
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Genuine Reviews</p>
                 <p className="text-2xl font-bold text-green-500">{result.real_count || 0}</p>
-                {/* Backend does not provide real percentage; per requirement, do not calculate on frontend */}
+                
               </div>
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Overall Sentiment</p>
@@ -421,6 +438,9 @@ const ReviewAnalyzer = () => {
 };
 
 export default ReviewAnalyzer;
+
+
+
 // import React, { useState, useEffect } from "react";
 // import { apiFetch } from "../utils/api";
 
